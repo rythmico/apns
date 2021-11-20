@@ -21,12 +21,11 @@ class APNSTests: XCTestCase {
                 keyIdentifier: "MY_KEY_ID",
                 teamIdentifier: "MY_TEAM_ID"
             ),
-            topic: "MY_TOPIC",
-            environment: .sandbox
+            topic: "MY_TOPIC"
         )
 
         app.get("test-push") { req -> EventLoopFuture<HTTPStatus> in
-            req.apns.send(
+            req.apns.client(.sandbox).send(
                 .init(title: "Hello", subtitle: "This is a test from vapor/apns"),
                 to: "98AAD4A2398DDC58595F02FA307DF9A15C18B6111D1B806949549085A8E6A55D"
             ).map { .ok }

@@ -10,7 +10,7 @@ extension Request {
     }
 }
 
-extension Request.APNS: APNSwiftClient {
+extension Request.APNS {
     public var logger: Logger? {
         self.request.logger
     }
@@ -19,32 +19,7 @@ extension Request.APNS: APNSwiftClient {
         self.request.eventLoop
     }
 
-    public func send(
-        rawBytes payload: ByteBuffer,
-        pushType: APNSwiftConnection.PushType,
-        to deviceToken: String,
-        expiration: Date?,
-        priority: Int?,
-        collapseIdentifier: String?,
-        topic: String?,
-        logger: Logger?,
-        apnsID: UUID? = nil
-    ) -> EventLoopFuture<Void> {
-        self.request.application.apns.pool.withConnection(
-            logger: logger,
-            on: self.eventLoop
-        ) {
-            $0.send(
-                rawBytes: payload,
-                pushType: pushType,
-                to: deviceToken,
-                expiration: expiration,
-                priority: priority,
-                collapseIdentifier: collapseIdentifier,
-                topic: topic,
-                logger: logger,
-                apnsID: apnsID
-            )
-        }
+    public func client(_ environment: APNSwiftConfiguration.Environment) -> Application.APNS.Client {
+        self.request.application.apns.client(environment, logger: logger, eventLoop: eventLoop)
     }
 }
